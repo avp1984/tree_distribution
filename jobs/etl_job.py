@@ -76,10 +76,10 @@ class TreeDistributionAnalyzer:
         :return: Spark DataFrame of the tree details
         """
 
-        df = (spark.read.format(config['input-file-format']) \
-            .option("inferSchema",config['infer-schema']) \
-            .option("header", config['input-header']) \
-            .option("sep", config['input-delimiter']) \
+        df = (spark.read.format(config['input-file-format'])
+            .option("inferSchema",config['infer-schema'])
+            .option("header", config['input-header'])
+            .option("sep", config['input-delimiter'])
             .load(config['input-dir']))
 
         self.log.warn('Input data read and DataFrame loaded')

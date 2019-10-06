@@ -2,80 +2,147 @@
 test_etl_job.py
 ~~~~~~~~~~~~~~~
 
-This module contains unit tests for the transformation steps of the ETL
-job defined in etl_job.py. It makes use of a local version of PySpark
-that is bundled with the PySpark package.
+This module contains unit tests for various analytics methods for `the planted trees analytics in San Francisco area`
+defined in etl_job.py. It makes use of a local version of PySpark that is bundled with the PySpark package.
 """
+
 import unittest
 
 import json
 
-from pyspark.sql.functions import mean
-
-from dependencies.spark import start_spark
-from jobs.etl_job import transform_data
+from jobs.etl_job import TreeDistributionAnalyzer
 
 
 class SparkETLTests(unittest.TestCase):
-    """Test suite for transformation in etl_job.py
+    """Test suite for tree analytics in etl_job.py
     """
 
     def setUp(self):
-        """Start Spark, define config and path to test data
+        """Start Spark, define config, master input data frame and path to test data
         """
         self.config = json.loads("""{"steps_per_floor": 21}""")
-        self.spark, *_ = start_spark()
         self.test_data_path = 'tests/test_data/'
+        self.test_data_validation_path = 'tests/test_data/validation_data/'
+        self.executor = TreeDistributionAnalyzer()
+
+        self.input_data = (
+            self.executor.spark
+                .read
+                .option("inferSchema", "true")
+                .option("header", "true")
+                .option("sep", ",")
+                .option("isDirectory", "true")
+                .csv(self.test_data_path + 'input-data'))
 
     def tearDown(self):
         """Stop Spark
         """
-        self.spark.stop()
+        #self.executor.spark.stop()
 
-    def test_transform_data(self):
-        """Test data transformer.
+
+    def test_find_banyan_trees(self):
+        """Test find_banyan_trees()
 
         Using small chunks of input data and expected output data, we
-        test the transformation step to make sure it's working as
+        test the find_banyan_trees() method to make sure it's working as
         expected.
         """
-        # assemble
-        input_data = (
-            self.spark
-            .read
-            .csv(self.test_data_path + 'input-data'))
 
         expected_data = (
-            self.spark
+            self.executor.spark
             .read
-            .parquet(self.test_data_path + 'employees_report'))
+            .option("inferSchema", "true")
+            .option("header", "true")
+            .option("sep", ",")
+            .option("isDirectory", "true")
+            .csv(self.test_data_validation_path + 'find_banyan_trees'))
 
-        expected_cols = len(expected_data.columns)
-        expected_rows = expected_data.count()
-        expected_avg_steps = (
-            expected_data
-            .agg(mean('steps_to_desk').alias('avg_steps_to_desk'))
-            .collect()[0]
-            ['avg_steps_to_desk'])
+        data_transformed = self.executor.create_output_dataframe(self.executor.find_banyan_trees(self.input_data))
+        data_transformed.show(truncate=False)
 
-        # act
-        data_transformed = transform_data(input_data, 21)
+        self.assertEqual(expected_data.columns, data_transformed.columns)
+        self.assertEqual(expected_data.count(), data_transformed.count())
+        exp_count = expected_data.select('BanyanTreeCount').collect()
+        actual_count = data_transformed.select('BanyanTreeCount').collect()
+        self.assertEqual((exp_count),(actual_count))
 
-        cols = len(expected_data.columns)
-        rows = expected_data.count()
-        avg_steps = (
-            expected_data
-            .agg(mean('steps_to_desk').alias('avg_steps_to_desk'))
-            .collect()[0]
-            ['avg_steps_to_desk'])
+    def test_find_plum_trees(self):
+        """Test find_plum_trees()
 
-        # assert
-        self.assertEqual(expected_cols, cols)
-        self.assertEqual(expected_rows, rows)
-        self.assertEqual(expected_avg_steps, avg_steps)
-        self.assertTrue([col in expected_data.columns
-                         for col in data_transformed.columns])
+        Using small chunks of input data and expected output data, we
+        test the find_plum_trees() method to make sure it's working as
+        expected.
+        """
 
+        expected_data = (
+            self.executor.spark
+            .read
+            .option("inferSchema", "true")
+            .option("header", "true")
+            .option("sep", ",")
+            .option("isDirectory", "true")
+            .csv(self.test_data_validation_path + 'find_plum_trees'))
+
+        data_transformed = self.executor.find_plum_trees(self.input_data)
+        data_transformed.show(truncate=False)
+
+        self.assertEqual(expected_data.columns, data_transformed.columns)
+        self.assertEqual(expected_data.count(), data_transformed.count())
+        exp_count = expected_data.select('CherryPlumTrees').collect()
+        actual_count = data_transformed.select('CherryPlumTrees').collect()
+        self.assertEqual((exp_count),(actual_count))
+
+    def test_find_most_common_trees(self):
+        """Test find_most_common_trees()
+
+        Using small chunks of input data and expected output data, we
+        test the find_most_common_trees() method to make sure it's working as
+        expected.
+        """
+
+        expected_data = (
+            self.executor.spark
+            .read
+            .option("inferSchema", "true")
+            .option("header", "true")
+            .option("sep", ",")
+            .option("isDirectory", "true")
+            .csv(self.test_data_validation_path + 'find_most_common_trees'))
+
+        data_transformed = self.executor.find_most_common_trees(self.input_data)
+        data_transformed.show(truncate=False)
+
+        self.assertEqual(expected_data.columns, data_transformed.columns)
+        self.assertEqual(expected_data.count(), data_transformed.count())
+        exp_trees = expected_data.select('tree_type').collect()
+        actual_trees = data_transformed.select('tree_type').collect()
+        self.assertEqual((exp_trees),(actual_trees))
+
+    def test_find_most_trees_address(self):
+        """Test find_most_trees_address()
+
+        Using small chunks of input data and expected output data, we
+        test the find_most_trees_address() method to make sure it's working as
+        expected.
+        """
+
+        expected_data = (
+            self.executor.spark
+            .read
+            .option("inferSchema", "true")
+            .option("header", "true")
+            .option("sep", ",")
+            .option("isDirectory", "true")
+            .csv(self.test_data_validation_path + 'find_most_trees_address'))
+
+        data_transformed = self.executor.find_most_trees_address(self.input_data)
+        data_transformed.show(truncate=False)
+
+        self.assertEqual(expected_data.columns, data_transformed.columns)
+        self.assertEqual(expected_data.count(), data_transformed.count())
+        exp_most_trees_address = expected_data.select('address').collect()
+        actual_most_trees_address = data_transformed.select('address').collect()
+        self.assertEqual((exp_most_trees_address),(actual_most_trees_address))
 
 if __name__ == '__main__':
     unittest.main()
