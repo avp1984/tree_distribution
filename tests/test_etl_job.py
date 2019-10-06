@@ -21,8 +21,8 @@ class SparkETLTests(unittest.TestCase):
         """Start Spark, define config, master input data frame and path to test data
         """
         self.config = json.loads("""{"steps_per_floor": 21}""")
-        self.test_data_path = 'tests/test_data/'
-        self.test_data_validation_path = 'tests/test_data/validation_data/'
+        self.test_data_path = 'tests/test-data/'
+        self.test_data_validation_path = 'tests/test-data/validation-data/'
         self.executor = TreeDistributionAnalyzer()
 
         self.input_data = (
