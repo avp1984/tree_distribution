@@ -40,6 +40,8 @@ root/
  |   Pipfile
  |   Pipfile.lock
  |   README.md
+ |   requirements.txt
+ |   run.sh
 ```
 
 The main Python module containing the Pyspark job, is `jobs/etl_job.py`. Any external configuration parameters required by `etl_job.py` are stored in JSON format in `configs/etl_config.json`. The  `build_dependencies.sh` script, which is a bash script for building these dependencies into a zip-file to be sent to the cluster (`packages.zip`). Unit test modules are kept in the `tests` folder and small chunks of representative input and output data, to be used with the tests, are kept in `tests/test-data` directory.
@@ -70,16 +72,13 @@ Run the `build_dependencies.sh` bash script for automating the production of `pa
 ```
 
 ## Running the ETL job
-
-Asuuming correct `python` version is saved in `PYSPARK_PYTHON` variable, else follow,
+Assuming that the `$SPARK_HOME` environment variable points to your Spark installation folder, then the job can be run from the project's root directory using the following command from the terminal,
+Ensure correct `python` version is installed on the edge node and follow the command `path/to/project/run.sh <spark url>`, if no spark url is provided, the job will be executing on standalone spark cluster.
 ```bash
-pipenv install --dev
-
-export PYSPARK_PYTHON=python3.7
+:>> ./run.sh 
 ```
-Assuming that the `$SPARK_HOME` environment variable points to your local Spark installation folder, then the job can be run from the project's root directory using the following command from the terminal,
 
-To submit the spark job follow the command,
+The `run.sh` script uses the following command to invoke the job,
 ```bash
 $SPARK_HOME/bin/spark-submit \
 --master local[*] \
