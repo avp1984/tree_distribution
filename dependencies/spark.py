@@ -15,16 +15,12 @@ from pyspark.sql import SparkSession
 from dependencies import logging
 
 
-def start_spark(app_name='my_spark_app', master='local[*]',
+def start_spark(app_name='sf_tree_distribution_job', master='local[*]',
                 files=[], spark_config={}):
     """Start Spark session, get Spark logger and load config files.
 
     Start a Spark session on the worker node and register the Spark
-    application with the cluster. Note, that only the app_name argument
-    will apply when this is called from a script sent to spark-submit.
-    All other arguments exist solely for testing the script from within
-    an interactive Python console.
-
+    application with the cluster.
 
     :param app_name: Name of Spark app.
     :param master: Cluster connection details (defaults to local[*]).

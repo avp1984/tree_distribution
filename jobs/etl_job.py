@@ -24,6 +24,7 @@ from pyspark.sql.window import Window
 
 from dependencies.spark import start_spark
 
+
 class TreeDistributionAnalyzer:
 
     # start Spark application and get Spark session, logger and config
@@ -85,7 +86,6 @@ class TreeDistributionAnalyzer:
         self.log.warn('Input data read and DataFrame loaded')
         return df
 
-
     def find_most_trees_address(self, df):
         """Find the adrress with most number of trees planted
 
@@ -141,7 +141,7 @@ class TreeDistributionAnalyzer:
         subtype to match the cherry plum subtype. Also check if the tree is DPW maintained.
         """
         plum_trees = (df.select('species', 'tree_id').filter(
-        col('species').contains('Cherry Plum') & col('legal_status').like('DPW Maintained')))
+            col('species').contains('Cherry Plum') & col('legal_status').like('DPW Maintained')))
 
         # find the total of trees in each cherry plum tree types
         plum_trees_df = plum_trees.select('species').groupBy('species').count()
@@ -192,6 +192,7 @@ class TreeDistributionAnalyzer:
         """
         banyan_tree_count = self.spark.createDataFrame([[df.count()]]).withColumnRenamed('_1', 'BanyanTreeCount')
         return banyan_tree_count
+
 
 # entry point for PySpark application
 if __name__ == '__main__':
