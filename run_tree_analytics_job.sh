@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+if [[ $1 == "help" ]]
+	then
+		echo "Usage: run_tree_analytics_job.sh [spark_cluster_url], job will run on local standalone cluster if no spark url is provided"
+        exit 0
+fi
 
 if [ $# -eq 0 ]
   then
