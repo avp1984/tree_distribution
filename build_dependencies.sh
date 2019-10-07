@@ -39,7 +39,7 @@ then
 
     # remove temporary directory and requirements.txt
     rm -rf packages
-    rm requirements.txt
+    #rm requirements.txt
     
     # add local modules
     echo 'Adding all modules from local utils package'
