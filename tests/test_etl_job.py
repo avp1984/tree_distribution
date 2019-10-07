@@ -20,7 +20,12 @@ class SparkETLTests(unittest.TestCase):
     def setUp(self):
         """Start Spark, define config, master input data frame and path to test data
         """
-        self.config = json.loads("""{"steps_per_floor": 21}""")
+        self.config = json.loads("""{  "input-file-format": "csv",
+          "input-dir": "/Users/arunvasu/Downloads/san_francisco_street_trees.csv",
+          "output-dir": "/Users/arunvasu/Downloads/tree-distributions",
+          "input-delimiter": ",",
+          "input-header": "true",
+          "infer-schema": "true"}""")
         self.test_data_path = 'tests/test-data/'
         self.test_data_validation_path = 'tests/test-data/validation-data/'
         self.executor = TreeDistributionAnalyzer()

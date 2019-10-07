@@ -1,6 +1,6 @@
 # San Francisco: Tree Distributions Project
 
-This project is aimed to build an ETL pipeline to analyse the and find the distribution of various types of trees 
+This project is aimed to build an ETL pipeline to analyse and find the distribution of various types of trees 
 planted in San Francisco area.
 
 The different statistics this project will find are, 
@@ -73,6 +73,8 @@ Run the `build_dependencies.sh` bash script for automating the production of `pa
 
 Asuuming correct `python` version is saved in `PYSPARK_PYTHON` variable, else follow,
 ```bash
+pipenv install --dev
+
 export PYSPARK_PYTHON=python3.7
 ```
 Assuming that the `$SPARK_HOME` environment variable points to your local Spark installation folder, then the job can be run from the project's root directory using the following command from the terminal,
@@ -107,7 +109,7 @@ python -m unittest tests/test_*.py
 
 
 # Expected output
-## The out put files for the this assignemnt is checked in to the directory `output-files` in project root.
+## The out put files for the this assignment is checked in to the directory `output-files` in project root.
 ## All the output files will be saved in the configured output directory location in `configs/etl_config.json`. It can be accessed by
 ```bash
 :>> ls -l <path/to/output/direcory> 
