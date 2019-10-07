@@ -1,0 +1,8 @@
+{
+  "input-file-format": "csv",
+  "input-dir": "/Users/arunvasu/Downloads/san_francisco_street_trees.csv",
+  "output-dir": "/Users/arunvasu/Downloads/tree-distributions",
+  "input-delimiter": ",",
+  "input-header": "true",
+  "infer-schema": "true"
+}
